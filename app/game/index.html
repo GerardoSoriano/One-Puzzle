@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>One Puzzle</title>
+    <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+    <nav id="header">
+
+    </nav>
+    <div id="content">
+        
+    </div>
+    <footer id="footer">
+
+    </footer>
+    <!-- LIBS -->
+    <script src="../resources/lib/jquery/dist/jquery.min.js"></script>
+    <script src="../resources/lib/three/build/three.min.js"></script>
+    <!-- PLUGINGS -->
+    <script src="../resources/plugins/OrbitControls.js"></script>
+    <script src="../resources/plugins/PointerLockControls.js"></script>
+    <script src="../resources/plugins/OBJLoader.js"></script>
+    <!-- SHADERS -->
+    <script id="vsCelShading" type="x-shader/x-vertex">
+        varying vec3 vLightDir;
+        varying vec3 vEyeNorm;
+        varying vec4 vColor;
+
+        uniform vec3 uLightPos;
+        uniform vec4 uColor;
+
+        void main(){
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+            vec4 tmp = modelViewMatrix * vec4(uLightPos, 1.0);
+            vLightDir = tmp.xyz;
+
+            vEyeNorm = normalMatrix * normal;
+            
+            vColor = uColor;
+        }
+    </script>
+    <script id="fsCelShading" type="x-shader/x-fragment">
+        varying vec3 vLightDir;
+        varying vec3 vEyeNorm;
+        varying vec4 vColor;
+
+        void main(){
+            float ndotl = dot(normalize(vEyeNorm), normalize(vLightDir));
+
+            if(ndotl > 0.8){
+                ndotl = 1.0;
+            }else if(ndotl > 0.6){
+                ndotl = 0.6;
+            }else{
+                ndotl = 0.2;
+            }
+
+            gl_FragColor = vec4(ndotl, ndotl, ndotl, 1.0) * vColor;
+        }
+    </script>
+    <!-- <script id="vsAnimeEffect" type="x-shader/x-vertex">
+        uniform float uEdgeWidthRatio;
+        uniform bool uEdge;
+        uniform vec3 uLightPos;
+
+        varying vec2 vUV;
+        varying vec3 vEyeDir;
+        varying vec3 vLightDir;
+
+        void main(){
+            vec3 pos = (modelMatrix * vec4(position, 1.0)).xyz;
+
+            if(uEdge){
+                pos += normal * uEdgeWidthRatio;
+            }else{
+                vec3 eye = cameraPosition - pos;
+                vec3 light = uLightPos - pos;
+                vec3 t = normalize(cross(normal, vec3(0.0, 1.0, 0.0)));
+                vec3 b = cross(normal, t);
+
+                vEyeDir = normalize(vec3(dot(t, eye), dot(b, eye), dot(normal, eye)));
+                vLightDir = normalize(vec3(dot(t, light), dot(b, light), dot(normal, light)));
+                vUV = uv;
+            }
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 10);
+        }
+    </script>
+    <script id="fsAnimeEffect" type="x-shader/x-fragment">
+        uniform vec3 uLightDir;
+        uniform sampler2D uStepTexture;
+        uniform sampler2D uTexture;
+        uniform sampler2D uNormalMap;
+        uniform samplerCube uEnvMap;
+        uniform bool uEdge;
+        uniform vec4 uEdgeColor;
+        uniform vec4 uColor;
+
+        varying vec2 vUV;
+        varying vec3 vEyeDir;
+        varying vec3 vLightDir;
+
+        void main(void){
+            if(uEdge){
+                gl_FragColor = uEdgeColor;
+            }else{
+                vec3 mNormal = (texture2D(uNormalMap, vUV) * 2.0 - 1.0).rgb;
+                vec3 halfLE = normalize(vLightDir + vEyeDir);
+                float step = clamp(dot(mNormal, vLightDir), 1.0, 1.0);
+                gl_FragColor = texture2D(uTexture, vUV) * texture2D(uStepTexture, vec2(step, 1.0))
+            }
+        }
+    </script> -->
+    <!--script id="vsCelShader" type="x-shader/x-vertex">
+        varying vec3 vNormal;
+        varying vec3 vViewPos;
+
+        void main(){
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+            vNormal = normalize(normalMatrix * normal);
+            vec4 mvPosition = modelViewMatrix * vec4(position 1.0);
+            vViewPos = -mvPosition.xyz';
+        }
+    </script>
+    <script id="fsCelShader" type="x-shader/x-fragment">
+        uniform vec3 uMaterialColor;
+        uniform vec3 uDirLightPos;
+        uniform vec3 uDirLightColor;
+        uniform float uKd;
+        uniform float uBorder;
+        
+        varying vec3 vNormal;
+        varying vec3 vViewPos;
+
+        void main(){
+            vec4 lDirection = viewMatrix * vec4(uDirLightPos, 0.0);
+            vec3 lVector = normalize(lDirection.xyz);
+
+            vec3 normal = normalize(vNormal);
+
+            float diffuse = dot(normal, lVector);
+            if(diffuse > 0.6){
+                diffuse = 1.0;
+            }else if(diffuse > -0.2){
+                diffuse = 0.7;
+            }else{
+                diffuse = 0.3;
+            }
+
+            gl_FragCOlor = vec4(uKd * uMaterialColor * uDirLightColor * diffuse, 1.0);
+        }
+    </script-->
+    <!--script id="vertexShader" type="shader/vertex">
+        precision highp float;
+        varying vec2 vUv;
+        varying vec3 vLightFront;
+        
+        // 注入three.js中预定义的glsl片段
+        #include <common>
+        #include <lights_pars>
+        void main() {
+            #include <beginnormal_vertex>
+            #include <defaultnormal_vertex>
+            #include <begin_vertex>
+            #include <project_vertex>
+            // 在lights_lambert_vertex这段代码中计算了vLightFront
+            // https://github.com/mrdoob/three.js/blob/dev/src/renderers/shaders/ShaderChunk/lights_lambert_vertex.glsl
+            #include <lights_lambert_vertex>
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+    </script>
+
+    <script id="outlineFragmentShader" type="shader/fragment">
+        // outline的效果参考了这篇博客 http://blog.csdn.net/u011712406/article/details/50085281
+        uniform sampler2D depthTexture;
+        uniform sampler2D normalTexture;
+        uniform sampler2D sceneTexture;
+        varying vec2 vUv;
+        float planeDistance( const in vec3 positionA, const in vec3 normalA, const in vec3 positionB, const in vec3 normalB ) {
+            vec3 positionDelta = positionB-positionA;
+            float planeDistanceDelta = max( abs( dot( positionDelta, normalA ) ), abs( dot( positionDelta, normalB ) ) );
+                return planeDistanceDelta;
+        }
+        void main() {
+            float depthCenter = texture2D( depthTexture, vUv ).r;
+            float px = 1.0 / 2000.0;    // 相邻取样点间隔
+            vec3 leftpos = vec3( vUv.s - px, vUv.t, 1.0 - texture2D( depthTexture, vec2( vUv.s - px, vUv.t ) ).r );
+            vec3 rightpos = vec3( vUv.s + px, vUv.t, 1.0 - texture2D( depthTexture, vec2( vUv.s + px, vUv.t ) ).r );
+            vec3 uppos = vec3( vUv.s, vUv.t - px, 1.0 - texture2D( depthTexture, vec2( vUv.s, vUv.t - px ) ).r );
+            vec3 downpos = vec3( vUv.s, vUv.t + px, 1.0 - texture2D( depthTexture, vec2( vUv.s, vUv.t + px ) ).r );
+            vec3 leftnor = texture2D( normalTexture, vec2( vUv.s - px, vUv.t ) ).xyz;
+            vec3 rightnor = texture2D( normalTexture, vec2( vUv.s + px, vUv.t ) ).xyz;
+            vec3 upnor = texture2D( normalTexture, vec2( vUv.s, vUv.t - px ) ).xyz;
+            vec3 downnor = texture2D( normalTexture, vec2( vUv.s, vUv.t + px ) ).xyz;
+            vec2 planeDist = vec2( planeDistance( leftpos, leftnor, rightpos, rightnor ), planeDistance( uppos, upnor, downpos, downnor ) );
+            float planeEdge = 2.5 * length( planeDist );
+            planeEdge = 1.0 - 0.5 * smoothstep( 0.0, depthCenter, planeEdge );
+            float normEdge = max( length( leftnor - rightnor ), length( upnor - downnor ) );
+            normEdge = 1.0 - 0.5 * smoothstep( 0.0, 0.4, normEdge ); 
+            float edge= planeEdge * normEdge;
+            vec4 raw = texture2D( sceneTexture, vUv );
+            gl_FragColor = vec4( vec3( raw * edge ), 1.0 );
+        }
+    </script>
+
+    <script id="cartoonFragmentShader" type="shader/fragment">
+        varying vec3 vLightFront;
+        void main() {
+            // green 0xabff33
+            vec3 greenColor = vec3 ( 0.67, 1.0, 0.1 );
+            // 亮度
+            float intensity = vLightFront[ 0 ];
+            // 根据亮度做不同的处理
+            if ( intensity < 0.30 ) {
+                gl_FragColor = vec4( mix( greenColor, vec3( 0.0 ), 0.5 ), 1.0 ); 
+            }
+            if ( intensity >= 0.30 ) {
+                gl_FragColor = vec4( mix( greenColor, vec3( 0.0 ), 0.3 ), 1.0 );
+            }
+            if ( intensity >= 0.65 ) { 
+                gl_FragColor = vec4( mix( greenColor, vec3( 0.5 ), 0.1 ), 1.0 ); 
+            }
+            if ( intensity >= 0.95 ) { 
+                gl_FragColor = vec4( mix( greenColor, vec3( 1.0 ), 0.3 ), 1.0 );
+            }
+        }
+    </script-->
+    <!-- CLASSES -->
+    <script src="js/class/GraphicsHelper.js"></script>
+    <!-- LOGIC -->
+    <script src="js/game.js"></script>
+</body>
+</html>
