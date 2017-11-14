@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+    <link rel="stylesheet" href="../resources/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../resources/lib/font-awesome/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="container p-2">
+        <div class="card text-center w-50 mx-auto p-3">
+            <!-- Facebook login -->
+            <button id="facebook" class="btn btn-primary btn-block" onclick="checkLoginStatus()" disabled>
+                <i class="fa fa-facebook-square" aria-hidden="true"></i>
+                Inicia sesión con Facebook
+            </button>
+            <hr>
+            <!-- Local login -->
+            <form id="login" class="mb-4">
+                <input type="text" name="email" id="txtEmail" class="form-control mb-3 json" placeholder="Correo electrónico">
+                <input type="password" name="password" id="txtPassword" class="form-control mb-3 json" placeholder="Contraseña" data-parsley-match="[0-9]{3}">
+                <div class="form-row d-flex align-items-center">
+                    <div class="col-4">
+                        <div class="form-check">
+                            <label for="" class="form-check-label">
+                                <input type="checkbox" name="remember" id="cbRemember" class="form-check-input json"> Recuerdame
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <input type="submit" value="Iniciar Sesión" class="btn btn-success btn-block">
+                    </div>
+                </div>
+            </form>
+            <a href="" class="text-success mb-2">¿Olvidaste tu contraseña?</a>
+            <span>¿No tienes cuenta?
+                <a href="register.html" class="text-success">Registrate</a>
+            </span>
+            <hr>
+            <p class="small text-muted">Si haces clic en "Acceder con Facebook" y no eres usuario de OnePuzzle, quedarás registrado.</p>
+        </div>
+    </div>
+    <script src="../resources/lib/jquery/dist/jquery.min.js"></script>
+    <script src="../resources/lib/popper.js/dist/popper.min.js"></script>
+    <script src="../resources/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../resources/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="../resources/lib/jquery-validation/dist/additional-methods.js"></script>
+    <script src="js/facebook.js"></script>
+    <script src="js/form.js"></script>
+</body>
+
+</html>

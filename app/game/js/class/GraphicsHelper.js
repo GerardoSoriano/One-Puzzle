@@ -1,23 +1,18 @@
+//import THREE from 'three';
+
 var GraphicsHelper = function(){
     this.renderer = new THREE.WebGLRenderer();
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera();
+    this.clock = new THREE.Clock();
 
     this.manager = new THREE.LoadingManager(); 
-    this.loader = new THREE.OBJLoader(this.manager);
+    this.objLoader = new THREE.OBJLoader(this.manager);
+    this.textureLoader = new THREE.TextureLoader();
 
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
     this.currentSelection = null;
-
-    this.depthMaterial = null;
-    this.normalMaterial = null;
-    this.outlineMaterial = null;
-    this.cartoonMaterial = null;
-
-    this.depthTexture = null;
-    this.normalTexture = null;
-    this.outlineTexture = null;
 }
 GraphicsHelper.prototype.init = function(selector){
     this.container = selector;
@@ -25,13 +20,13 @@ GraphicsHelper.prototype.init = function(selector){
     this.height = $(this.container).innerHeight();
 
     this.renderer.setSize(this.width, this.height, false);
-    this.renderer.setClearColor( 0x6bb8e5);
+    this.renderer.setClearColor( 0x000000 );
     $(this.container).append(this.renderer.domElement);
 
     this.camera.fov = 45;
     this.camera.aspect = this.width / this.height;
     this.camera.near = 0.1;
-    this.camera.far = 1000;
+    this.camera.far = 100000;
     this.camera.position.set(0, 0, 100);
     this.camera.lookAt(new THREE.Vector3(0,0,0));
     this.camera.updateProjectionMatrix();
@@ -39,110 +34,45 @@ GraphicsHelper.prototype.init = function(selector){
 
     this.load();
 
-
-    /**
-     * Plugin de camara.
-     *
-     * CODIGO:
-     *  this.controls = new THREE.PointerLockControls(this.camera);
-     *  this.scene.add(this.controls.getObject())
-     */
     this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 
     this.renderer.render(this.scene, this.camera);
 }
 GraphicsHelper.prototype.load = function(){
-    //#region Plano
-    /*let plane_geometry = new THREE.PlaneGeometry(1000,1000,10,10);
+    //#region Skydome
 
-    let plane_texture = new THREE.ImageUtils.loadTexture('resources/materials/stone/ground_piled_stone_basecolor.png');
-    plane_texture.wrapS = plane_texture.wrapT = THREE.RepeatWrapping;
-    plane_texture.repeat.set(10,10);
-    
-    let plane_bumpmap = new THREE.ImageUtils.loadTexture('resources/materials/stone/ground_piled_stone_height.png');
-    plane_bumpmap.wrapS = plane_bumpmap.wrapT = THREE.RepeatWrapping;
-    plane_bumpmap.repeat.set(10,10);
-    
-    let plane_lightmap = new THREE.ImageUtils.loadTexture('resources/materials/stone/ground_piled_stone_roughness.png');
-    plane_lightmap.wrapS = plane_lightmap.wrapT = THREE.RepeatWrapping;
-    plane_lightmap.repeat.set(10,10);
-    
-    let plane_material = new THREE.MeshPhongMaterial({
-        map: plane_texture,
-        bumpMap: plane_bumpmap,
-        lightMap: plane_lightmap,
-        side: THREE.DoubleSide
-    });
-    
-    this.plane = new THREE.Mesh(plane_geometry, plane_material);
-    this.plane.rotation.x = 90 * Math.PI / 180 ;
-    this.plane.name = "plano";
+    let skydome_geometry = new THREE.SphereGeometry(3000, 25, 25);
+    let skydome_material = new THREE.ShaderMaterial({
+        uniforms: {
+            texture: {
+                type: 't',
+                value: this.textureLoader.load('../resources/img/skydome.jpg')
+            }
+        },
+        vertexShader: $('#vsSkydome').text(),
+        fragmentShader: $('#fsSkydome').text()
+    })
+    this.skydome = new THREE.Mesh(skydome_geometry,skydome_material);
+    this.skydome.material.side = THREE.BackSide;
+    this.skydome.rotation.order = 'XZY';
+    this.skydome.renderDepth  = 1000.0;
+    this.scene.add(this.skydome);
 
-    this.scene.add(this.plane);*/
-    //#endregion
-
-    //#region Figura
-    /*let figure_geometry = new THREE.Geometry();
-        
-    let figure_vertex = [[2,7,0],[7,2,0],[12,7,0],[12,17,0],[7,12,0],[2,17,0],[2,7,0],
-                    [2,7,2],[7,2,2],[12,7,2],[12,17,2],[7,12,2],[2,17,2],[2,7,2]];
-    for(let i = 0; i < figure_vertex.length; i++){
-        let x = figure_vertex[i][0];
-        let y = figure_vertex[i][1];
-        let z = figure_vertex[i][2];
-
-        let figure_vector = new THREE.Vector3(x,y,z);
-        figure_geometry.vertices.push(figure_vector);
-    }
-
-    let figure_material = new THREE.ParticleBasicMaterial({ color: 0xff0000 });
-    
-    this.figure = new THREE.Line(figure_geometry, figure_material);
-    
-    this.scene.add(this.figure);*/
     //#endregion
 
     //#region Luz
+
     this.ambient = new THREE.AmbientLight( 0x404040, 2 );
     this.scene.add(this.ambient);
-    this.light = new THREE.PointLight(0xffffff, 1, 100);
-    this.light.position.set(0, 50, 0);
-    this.scene.add(this.light);
-    //#endregion
 
-    //#region Figuras
-    this.cube = new THREE.Mesh( new THREE.CubeGeometry( 5, 5, 5 ), new THREE.MeshLambertMaterial({ color: 0xFFFF00}) );
-    this.cube.position.set( 25, 25, 25 );
-    this.cube.name = "cubomil";
-    this.scene.add( this.cube );
-    
-    this.sphere = new THREE.Mesh( new THREE.SphereGeometry( 5 ), new THREE.MeshLambertMaterial({ color: 0xFFFF00}) );
-    this.sphere.position.set( -25, 25, 25 );
-    this.scene.add( this.sphere );
-    
-    this.icosahedron = new THREE.Mesh( new THREE.IcosahedronGeometry( 5 ), new THREE.MeshLambertMaterial({ color: 0xFFFF00}) );
-    this.icosahedron.position.set( 25, 25, -25 );
-    this.scene.add( this.icosahedron );
-    
-    this.torus = new THREE.Mesh( new THREE.TorusGeometry( 5, 3 ), new THREE.MeshLambertMaterial({ color: 0xFFFF00}) );
-    this.torus.position.set( -25, 25, -25 );
-    this.scene.add( this.torus );
-    
-    this.cylinder = new THREE.Mesh( new THREE.CylinderGeometry( 5, 5, 5 ), new THREE.MeshLambertMaterial({ color: 0xFFFF00}) );
-    this.cylinder.position.set( 25, -25, 25 );
-    this.scene.add( this.cylinder );
-    
-    this.circle = new THREE.Mesh( new THREE.CircleGeometry( 5 ), new THREE.MeshLambertMaterial({ color: 0xFFFF00}) );
-    this.circle.position.set( -25, -25, 25 );
-    this.scene.add( this.circle );
-    
-    this.octahedron = new THREE.Mesh( new THREE.OctahedronGeometry( 5 ), new THREE.MeshLambertMaterial({ color: 0xFFFF00}) );
-    this.octahedron.position.set( 25, -25, -25 );
-    this.scene.add( this.octahedron );
-    
-    this.torusKnot = new THREE.Mesh( new THREE.TorusKnotGeometry( 5, 1 ), new THREE.MeshLambertMaterial({ color: 0xFFFF00}) );
-    this.torusKnot.position.set( -25, -25, -25 );
-    this.scene.add( this.torusKnot );
+    this.pointLight = new THREE.PointLight(0xffffff, 1, 100);
+    this.pointLight.position.set(0, 50, 0);
+    this.scene.add(this.pointLight);
+
+    this.directionalLight = new THREE.DirectionalLight(0xffff55, 1);
+    this.directionalLight.position.set(-600, 300, 600);
+    this.scene.add(this.directionalLight);
+
     //#endregion
 
     //#region Modelo
@@ -182,10 +112,58 @@ GraphicsHelper.prototype.load = function(){
     //     this.column_collider.add(this.column_base);
     // })
     //#endregion
+
+    //#region Agua
+    let water_normal = new THREE.ImageUtils.loadTexture('../resources/img/nm_water.jpg');
+    water_normal.wrapS = water_normal.wrapT = THREE.RepeatWrapping; 
+
+    this.water = new THREE.Water(this.renderer, this.camera, this.scene, {
+        textureWidth: 256,
+        textureHeight: 256,
+        waterNormals: water_normal,
+        alpha: 	1.0,
+        sunDirection: this.directionalLight.position.normalize(),
+        sunColor: 0xffffff,
+        waterColor: 0x001e0f,
+        betaVersion: 0,
+        side: THREE.DoubleSide
+    });
+
+    let water_plane = new THREE.Mesh(
+        new THREE.PlaneBufferGeometry(6000, 6000, 10, 10), 
+        this.water.material
+    );
+    water_plane.add(this.water);
+    water_plane.rotation.x = - Math.PI * 0.5;
+    
+    this.scene.add(water_plane);
+    //#endregion
+
+    //#region Terrenos
+    this.objLoader.load('../resources/lowpoly/island/island_1.obj', (obj) => {
+        obj.traverse((child) => {
+            if(child instanceof THREE.Mesh){
+                child.material = new THREE.MeshLambertMaterial({ color: 0xA27139 });
+            }
+        })
+
+        this.island_1 = obj.children[0];
+        this.scene.add(this.island_1);
+    })
+    //#endregion
 }   
 GraphicsHelper.prototype.loop = function(){
-    this.controls.update();
+    let time = this.clock.getElapsedTime();
+    let delta = this.clock.getDelta();
 
+    this.skydome.rotation.y += (2 * Math.PI) / (24 * 60 * 60);
+    this.water.material.uniforms.time.value += 1.0 / 60.0;
+
+    this.display();
+}
+GraphicsHelper.prototype.display = function(){
+    this.controls.update();
+    this.water.render();
     this.renderer.render(this.scene, this.camera);
 }
 GraphicsHelper.prototype.onMouseMove = function(e){

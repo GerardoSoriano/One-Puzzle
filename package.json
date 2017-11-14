@@ -13,8 +13,9 @@
   "repository": "https://github.com/GerardoSoriano/One-Puzzle.git",
   "dependencies": {
     "bootstrap": "4.0.0-beta.2",
+    "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
-    "parsleyjs": "^2.8.0",
+    "jquery-validation": "^1.17.0",
     "popper.js": "^1.12.6",
     "three": "^0.88.0"
   },

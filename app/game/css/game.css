@@ -1,14 +1,7 @@
-body {
-  margin: 0;
-  padding: 0; }
-
 #header {
-  width: 100%;
-  height: 7.5vh;
-  background-color: black; }
+  height: 7.5vh; }
 
 #content {
-  width: 100%;
   height: 85vh;
   background-color: #ddd; }
 
@@ -16,3 +9,10 @@ body {
   width: 100%;
   height: 7.5vh;
   background-color: #E33222; }
+
+#timer {
+  position: absolute;
+  right: 0; }
+
+#lose {
+  opacity: 0.6; }

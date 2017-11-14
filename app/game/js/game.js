@@ -1,52 +1,13 @@
-/**
- * Creamos nuestras variables globales.
- * 
- * Esto es la parte principal de nuestro juego.
- * Esta parte sería el equivalente al WinApi con OpenGL.
- * Simplemente es donde se incializan las cosas, creas eventos, etc.
- */
 var gh = new GraphicsHelper();
 
 $(document).ready(function () {
 
-    /**
-     * Binding de eventos.
-     * 
-     * Aquí es donde creamos nuestros eventos principales.
-     * En este caso tenemos tres:
-     *  -Mousemove (se activa cuando el mouse cambia de posición en el navegador)
-     *  -Resize (se activa cuando el tamaño del navegador cambia)
-     *  -Click (se actviva cuando se da clic con el mouse)
-     * Es recomendable inicializar mas eventos en esta parte.
-     * Los parametros que llevan son:
-     *  (nombreDelEvento, callback, unaMadreQueNoOcupas)
-     */
     window.addEventListener('mousemove', onMouseMove, false);
     window.addEventListener('resize', onWindowResize, false)
     window.addEventListener('click', onClick, false)
 
-    /**
-     * Inicializamos Three.js
-     * 
-     * Mandamos a llamar a la función init.
-     * El parametro que toma es un selector, que es donde se va a desplegar el render.
-     * Recuerda:
-     *  -'.' se utiliza para clases
-     *  -'#' se utiliza para id
-     */
     gh.init('#content');
 
-    /**
-     * Loop infinito.
-     * 
-     * Esta es la parte del loop.
-     * La función requestAnimationFrame es solamente una llamada de vuelta a la función que le pases.
-     * En este caso, si le pasamos animate, crea un loop infinito.
-     * Por ultimo se hace una llamada al loop de mi clase GraphicsHelper.js
-     * 
-     * NOTA:
-     *  -requestAnimationFrame es una función que a viene integrada en Three.js, no la creamos nosotros.
-     */
     var animate = function () {
         requestAnimationFrame(animate);
         gh.loop();
@@ -55,15 +16,67 @@ $(document).ready(function () {
     animate();
 })
 
-/**
- * Callbacks de eventos. 
- */
-var onMouseMove = function(e){
+//#region Métodos
+function startCountdown(){
+    let limit = new Date();
+    limit.setMinutes(limit.getMinutes() + 10);
+
+    let timerUpdate = setInterval(() => {
+        let time = getRemainTime(limit.toString());
+        let format = `${time.remainMinutes}:${time.remainSeconds}`;
+
+        $('#timer')
+            .text(format)
+            .toggleClass('text-warning', time.remainMinutes < 5)
+            .toggleClass('text-danger', time.remainMinutes < 1)
+
+        if(time.remainTime <= 1){
+          clearInterval(timerUpdate);
+
+          $('#lose')
+            .removeClass('d-none')
+            .addClass('d-flex');
+        }
+    }, 1000)
+}
+function getRemainTime(deadline){
+    let now = new Date(),
+        remainTime = ((new Date(deadline)).valueOf() - now.valueOf() + 1000) / 1000,
+        remainSeconds = ('0' + Math.floor(remainTime % 60)).slice(-2),
+        remainMinutes = ('0' + Math.floor(remainTime / 60 % 60)).slice(-2),
+        remainHours = ('0' + Math.floor(remainTime / 3600 % 24)).slice(-2),
+        remainDays = Math.floor(remainTime / (3600 * 24));
+
+    return {
+        remainTime,
+        remainSeconds,
+        remainMinutes,
+        remainHours,
+        remainDays
+    }
+}
+//#endregion
+
+//#region Eventos
+function onMouseMove(e){
     gh.onMouseMove(e);
 }
-var onWindowResize = function(e){
-    gh.onWindowResize(e)
+function onWindowResize(e){
+    gh.onWindowResize(e);
 }
-var onClick = function(e){
+function onClick(e){
     gh.onClick(e);
 }
+function onBtnPlayClick(){
+    
+}
+function onBtnTutorialClick(){
+
+}
+function onBtnSettingsClick(){
+    
+}
+function onBtnStatisticsClick(){
+        
+}
+//#endregion
