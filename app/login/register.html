@@ -11,12 +11,10 @@
 <body>
     <div class="container p-2">
         <div class="card text-center w-50 mx-auto p-3 _card">
-            <button id="facebook" class="btn btn-primary btn-block">Registrate con Facebook</button>
+            <button id="facebook" class="btn btn-primary btn-block" onclick="checkLoginStatus()" disabled>Registrate con Facebook</button>
             <hr>
             <form id="register" class="mb-4 text-left">
                 <input type="email" name="email" id="txtEmail" class="form-control mb-3 json" placeholder="Correo electrónico">
-                <input type="password" name="password" id="txtPassword" class="form-control mb-3 json" placeholder="Contraseña">
-                <input type="password" name="confirmPassword" id="txtConfirmPassword" class="form-control mb-3 json" placeholder="Confirmar contraseña">
                 <div class="input-group mb-3">
                     <span class="input-group-addon">@</span>
                     <input type="text" name="username" id="txtUsername" class="form-control json" placeholder="Nombre de usuario">                    
@@ -43,6 +41,8 @@
     <script src="../resources/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../resources/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="../resources/lib/jquery-validation/dist/additional-methods.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+    <script src="js/firebase.js"></script>
     <script src="js/facebook.js"></script>
     <script src="js/form.js"></script>
 </body>

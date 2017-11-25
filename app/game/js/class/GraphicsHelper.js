@@ -8,6 +8,10 @@ var GraphicsHelper = function () {
     this.clock = new THREE.Clock();
     this.controls = {};
 
+    this.audioLoader = new THREE.AudioLoader();
+    this.listener = new THREE.AudioListener();
+    this.waterSound = new THREE.Audio( this.listener );
+    
     this.manager = new THREE.LoadingManager();
     this.mtlLoader = new THREE.MTLLoader(this.manager);
     this.objLoader = new THREE.OBJLoader(this.manager);
@@ -39,6 +43,7 @@ GraphicsHelper.prototype.init = function (selector) {
     this.camera.near = 0.1;
     this.camera.far = 100000;
     this.camera.updateProjectionMatrix();
+    this.camera.add(this.listener)
 
     this.camera_collider = new THREE.Mesh(new THREE.CubeGeometry(10, 10, 10), new THREE.MeshLambertMaterial({
         color: 0x000000,
@@ -137,6 +142,12 @@ GraphicsHelper.prototype.load = function () {
     water_plane.rotation.x = -Math.PI * 0.5;
 
     this.sceneOutline.add(water_plane);
+
+    this.audioLoader.load('../resources/audio/waves.wav', (buffer) => {
+        this.waterSound.setBuffer(buffer);
+        this.waterSound.setLoop(true);
+        this.waterSound.setVolume(0.5);
+    })
 
     //#endregion
 

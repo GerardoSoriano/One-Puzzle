@@ -1,4 +1,5 @@
 @import 'components/_fonts.scss';
+@import 'components/_animation.scss';
 
 body{
     font-family: _EXPLORE_;
@@ -19,6 +20,16 @@ body{
     background-color: #E33222;
 }
 
+#background{
+    overflow: hidden;
+    text-align: center;
+    & img{
+        width: auto;
+        height: auto;
+        max-width: 100%
+    }
+}
+
 #timer{
     position: absolute;
     right: 0;
@@ -26,4 +37,36 @@ body{
 
 #lose{
     opacity: 0.6;
+}
+
+button.btn{
+    transform: rotateZ(-2deg);
+    position: relative;
+    background-color: #EF5350;
+    border-color: #000;
+    color: #000;
+    &::before{
+        position: absolute;
+        content: "";
+        background-color: #FFF59D;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        transform: rotateZ(4deg);
+        z-index: -1;
+    }
+    &:hover{
+        animation: hoverButton 1s;
+        animation-fill-mode: forwards;
+        color: #000;
+    }
+}
+
+.title{
+    color: #A27139;
+}
+
+.subtitle{
+    color: #EF5350
 }

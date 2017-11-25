@@ -1,0 +1,18 @@
+{
+    "game":{
+        "0":{
+            "score": 6000,
+            "time": 5000,
+            "user": "admin"
+        }
+    },
+    "user":{
+        "admin":{
+            "email": "root@mail.com",
+            "firstName": "root",
+            "gender": "male",
+            "lastName": "",
+            "img": ""
+        }
+    }
+}

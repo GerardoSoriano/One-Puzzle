@@ -20,7 +20,7 @@ function checkLoginStatus(){
         if(response.status == 'connected'){
             isConnected(response);
         }else{
-            window.location.replace('../login/login.html');
+            //window.location.replace('../login/login.html');
         }
     })
 }

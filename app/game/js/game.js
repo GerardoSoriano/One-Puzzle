@@ -4,7 +4,7 @@ var animate = null;
 var animateController = null;
 
 $(document).ready(function () {
-    if(localStorage.getItem('facebook:user:id') === null){
+    if (localStorage.getItem('facebook:user:id') === null) {
         window.location.replace('../login/login.html')
     }
 
@@ -26,6 +26,15 @@ $(document).ready(function () {
             displayWinnerScreen();
         }
     };
+
+    $('input#rngAudio').on('change', function () {
+        gh.waterSound.setVolume($(this).val())
+    })
+    $('input#rngBrightness').on('change', function () {
+        $('div#content > canvas')
+            .css('opacity', $(this).val())
+            .css('z-index', -1)
+    })
 })
 
 //#region Métodos
@@ -88,8 +97,33 @@ function displayWinnerScreen() {
         let clickScore = gh.clickCount;
 
         let totalScore = ((timeScore.remainTime - clickScore) < 0) ? 1000 : (timeScore.remainTime - clickScore) * 1000;
-        $('#score').text(totalScore);
+        $('#score').text(totalScore).attr('time', timeScore.remainTime);
     }
+}
+
+function hideAllMenus() {
+    let menu = $('#menu'),
+        pause = $('#pause'),
+        tutorial = $('#tutorial'),
+        settings = $('#settings'),
+        statistics = $('#statistics'),
+        lose = $('#lose'),
+        win = $('#win')
+
+    if (!menu.hasClass('d-none'))
+        menu.addClass('d-none');
+    if (!pause.hasClass('d-none'))
+        pause.addClass('d-none');
+    if (!tutorial.hasClass('d-none'))
+        tutorial.addClass('d-none');
+    if (!settings.hasClass('d-none'))
+        settings.addClass('d-none');
+    if (!statistics.hasClass('d-none'))
+        statistics.addClass('d-none');
+    if (!lose.hasClass('d-none'))
+        lose.addClass('d-none');
+    if (!win.hasClass('d-none'))
+        win.addClass('d-none');
 }
 //#endregion
 
@@ -112,12 +146,10 @@ function onKeyDown(e) {
             displayWinnerScreen();
             break;
         case 80:
-            let pause = $('#pause');
-            if (pause.hasClass('d-none')) {
-                clearInterval(timerUpdate);
-                pause.removeClass('d-none');
-                cancelAnimationFrame(animateController);
-            }
+            hideAllMenus();
+            $('#pause').removeClass('d-none');
+            clearInterval(timerUpdate);
+            cancelAnimationFrame(animateController);
             break;
     }
     gh.onKeyDown(e);
@@ -131,7 +163,11 @@ function onBtnPlayClick() {
     var start = $('#timer').text();
     start = start.split(":");
     startCountdown(start)
-    $('#menu').toggleClass('d-none');
+
+    $('#background').toggleClass('d-none');
+    hideAllMenus();
+
+    gh.waterSound.play();
     requestAnimationFrame(animate)
 }
 
@@ -139,35 +175,85 @@ function onBtnTutorialClick() {
 
 }
 
-function onBtnSettingsClick() {
-    $('#buttons').toggleClass('d-none');
-    $('#settings').toggleClass('d-none');
+function onBtnSettingsClick(from) {
+    hideAllMenus();
+    $('#settings')
+        .removeClass('d-none')
+        .attr('from', from);
 }
 
 function onBtnStatisticsClick() {
-    $('#buttons').toggleClass('d-none');
-    $('#statistics').toggleClass('d-none');
+    hideAllMenus();
+    $('#statistics').removeClass('d-none')
 }
+
+function onBtnBackClick() {
+    let from = $('#settings').attr('from')
+
+    hideAllMenus();
+
+    if (from == 'menu')
+        $('#menu').removeClass('d-none');
+    if (from == 'pause')
+        $('#pause').removeClass('d-none');
+}
+
+function onBtnApplyClick() {
+    console.log($('input#rngBrightness').val())
+}
+
 
 function onBtnContinueClick() {
     var start = $('#timer').text();
     start = start.split(":");
     startCountdown(start)
-    $('#pause').toggleClass('d-none');
+
+    hideAllMenus();
+
     requestAnimationFrame(animate)
 }
 
-function onBtnBackClick() {
-    $('#buttons').toggleClass('d-none');
-    if (!$('#settings').hasClass('d-none')) {
-        $('#settings').addClass('d-none');
-    }
-    if (!$('#statistics').hasClass('d-none')) {
-        $('#statistics').addClass('d-none');
-    }
-}
-
 function onBtnShareClick() {
-    
+    let totalScore = $('#score').text();
+    let timeScore = $('#score').attr('time');
+    let username = $('#username').text();
+
+    FB.getLoginStatus((response) => {
+        if (response.status == 'connected') {
+            FB.ui({
+                method: 'share',
+                href: 'www.onepuzzle.net',
+                quote: 'Mi record fue de ' + totalScore +  ', ¿cuál es el tuyo?'
+            }, function (response) {
+                let newScore = database.ref().child('game').push();
+                newScore.set({
+                    score: totalScore,
+                    time: timeScore,
+                    user: username
+                })
+            });
+        } else {
+            FB.login((response) => {
+                if (response.status === 'connected') {
+                    FB.ui({
+                        method: 'share',
+                        href: 'https://developers.facebook.com/docs/',
+                        quote: 'Mi record fue de ' + totalScore +  ', ¿cuál es el tuyo?'
+                    }, function (response) {
+                        let newScore = database.ref('game/').push().key;
+                        newScore.set({
+                            score: totalScore,
+                            time: timeScore,
+                            user: username
+                        })
+                    });
+                } else {
+                    console.log(response);
+                }
+            }, {
+                scope: 'public_profile, email'
+            })
+        }
+    })
 }
 //#endregion

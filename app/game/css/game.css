@@ -2,6 +2,12 @@
   font-family: _EXPLORE_;
   src: url("../../resources/fonts/ArcticExplorer.ttf"); }
 
+@keyframes hoverButton {
+  0% {
+    transform: rotateZ(-5deg); }
+  100% {
+    transform: rotateZ(5deg); } }
+
 body {
   font-family: _EXPLORE_; }
 
@@ -17,9 +23,44 @@ body {
   height: 7.5vh;
   background-color: #E33222; }
 
+#background {
+  overflow: hidden;
+  text-align: center; }
+  #background img {
+    width: auto;
+    height: auto;
+    max-width: 100%; }
+
 #timer {
   position: absolute;
   right: 0; }
 
 #lose {
   opacity: 0.6; }
+
+button.btn {
+  transform: rotateZ(-2deg);
+  position: relative;
+  background-color: #EF5350;
+  border-color: #000;
+  color: #000; }
+  button.btn::before {
+    position: absolute;
+    content: "";
+    background-color: #FFF59D;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    transform: rotateZ(4deg);
+    z-index: -1; }
+  button.btn:hover {
+    animation: hoverButton 1s;
+    animation-fill-mode: forwards;
+    color: #000; }
+
+.title {
+  color: #A27139; }
+
+.subtitle {
+  color: #EF5350; }

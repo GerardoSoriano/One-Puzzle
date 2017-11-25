@@ -47,6 +47,7 @@ function isConnected(response){
 }
 
 function registerUser(user){
+    console.log(user)
     database.ref('user/' + user.username).set({
         email: user.email,
         firstName: user.first_name,

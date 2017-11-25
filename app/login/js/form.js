@@ -10,17 +10,13 @@ $(document).ready(function () {
             email: {
                 required: true,
                 pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-            },
-            password: {
-                required: true
             }
         },
         messages: {
             email: {
                 required: 'Debes introducir este campo.',
                 pattern: 'Por favor, introduce un correo electrónico válido.'
-            },
-            password: 'Este campo es necesario.'
+            }
         },
         invalidHandler: function (event, validator) {
             var errors = validator.numberOfInvalids();
@@ -33,6 +29,15 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             let json = formToObject(form, '.json');
+            let username = json.email.split('@')[0];
+            
+            database.ref('user/' + username).once('value').then(function(snap){
+                if(snap.val() !== null && snap.val() !== undefined){
+                    window.location.replace('../game');
+                }else{
+                    alert('Por favor, registrate')
+                }
+            })
 
             console.log(json);
         }
@@ -49,14 +54,6 @@ $(document).ready(function () {
                 required: true,
                 pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
             },
-            password: {
-                required: true,
-                pattern: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/
-            },
-            confirmPassword: {
-                required: true,
-                equalTo: '#txtPassword'
-            },
             username: {
                 required: true,
                 pattern: /^[a-zA-Z0-9_-\s]+$/
@@ -70,7 +67,6 @@ $(document).ready(function () {
                 required: 'Debes introducir este campo.',
                 pattern: 'Por favor, introduce un correo electrónico válido.'
             },
-            password: 'Este campo es necesario.'
         },
         invalidHandler: function (event, validator) {
             var errors = validator.numberOfInvalids();
@@ -83,6 +79,13 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             let json = formToObject(form, '.json');
+            json.picture = {};
+            json.picture.data = {};
+            json.picture.data.url = null;
+            json.first_name = null;
+            json.last_name = null;
+            registerUser(json);
+            window.location.replace('../game');
 
             console.log(json);
         }
