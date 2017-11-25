@@ -1,1 +1,1 @@
-DirectoryIndex app/login/index.html
+Header set Access-Control-Allow-Origin "*"

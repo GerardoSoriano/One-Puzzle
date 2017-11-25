@@ -61,21 +61,6 @@ $(document).ready(function () {
                 required: true,
                 pattern: /^[a-zA-Z0-9_-\s]+$/
             },
-            day: {
-                required: true,
-                number: true,
-                maxlength: 2,
-                minlength: 2
-            },
-            month: {
-                required: true
-            },
-            year: {
-                required: true,
-                number: true,
-                maxlength: 4,
-                minlength: 4
-            },
             gender: {
                 required: true
             }

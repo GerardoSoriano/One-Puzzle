@@ -2,3 +2,5 @@ node_modules/
 app/resources/lib/
 credentials.json
 *.xml
+.vscode/
+*.zip

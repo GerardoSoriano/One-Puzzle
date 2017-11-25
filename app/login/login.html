@@ -8,11 +8,12 @@
     <title>Login</title>
     <link rel="stylesheet" href="../resources/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../resources/lib/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/login.css">
 </head>
 
 <body>
     <div class="container p-2">
-        <div class="card text-center w-50 mx-auto p-3">
+        <div class="card text-center w-50 mx-auto p-3 _card">
             <!-- Facebook login -->
             <button id="facebook" class="btn btn-primary btn-block" onclick="checkLoginStatus()" disabled>
                 <i class="fa fa-facebook-square" aria-hidden="true"></i>
@@ -26,19 +27,19 @@
                 <div class="form-row d-flex align-items-center">
                     <div class="col-4">
                         <div class="form-check">
-                            <label for="" class="form-check-label">
+                            <label for="cbRemember" class="form-check-label">
                                 <input type="checkbox" name="remember" id="cbRemember" class="form-check-input json"> Recuerdame
                             </label>
                         </div>
                     </div>
                     <div class="col-8">
-                        <input type="submit" value="Iniciar Sesión" class="btn btn-success btn-block">
+                        <input type="submit" value="Iniciar Sesión" class="btn btn-primary btn-block">
                     </div>
                 </div>
             </form>
-            <a href="" class="text-success mb-2">¿Olvidaste tu contraseña?</a>
+            <a href="" class="text-primary mb-2">¿Olvidaste tu contraseña?</a>
             <span>¿No tienes cuenta?
-                <a href="register.html" class="text-success">Registrate</a>
+                <a href="register.html" class="text-primary">Registrate</a>
             </span>
             <hr>
             <p class="small text-muted">Si haces clic en "Acceder con Facebook" y no eres usuario de OnePuzzle, quedarás registrado.</p>
@@ -49,6 +50,8 @@
     <script src="../resources/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../resources/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="../resources/lib/jquery-validation/dist/additional-methods.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+    <script src="js/firebase.js"></script>
     <script src="js/facebook.js"></script>
     <script src="js/form.js"></script>
 </body>

@@ -30,7 +30,28 @@ function checkLoginStatus(){
 }
 
 function isConnected(response){
-    FB.api('/me', {fields: 'email, gender, name, age_range'}, function(response) {
-        console.log(response);
+    FB.api('/me', {fields: 'email, gender, name, age_range, first_name, last_name, picture'}, function(response) {
+        let username = response.email.split('@')[0];
+        response.username = username;
+
+        //checamos si existe el username en la base de datos
+        database.ref('user/' + username).once('value').then(function(snap){
+            if(snap.val() !== null && snap.val() !== undefined){
+                window.location.replace('../game');
+            }else{
+                registerUser(response);
+                window.location.replace('../game');
+            }
+        })
     });
+}
+
+function registerUser(user){
+    database.ref('user/' + user.username).set({
+        email: user.email,
+        firstName: user.first_name,
+        gender: user.gender,
+        img: user.picture.data.url,
+        lastName: user.last_name
+    })
 }

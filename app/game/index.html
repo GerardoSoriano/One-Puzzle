@@ -1,54 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>One Puzzle</title>
-    <link rel="stylesheet" href="css/game.css">
+    <link rel="shortcut icon" href="../resources/img/OnePuzzle.png" type="image/x-icon">
     <link rel="stylesheet" href="../resources/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/game.css">
 </head>
+
 <body>
     <nav id="header" class="navbar navbar-dark bg-dark">
-        <a class="navbar-brand mr-auto" href="#">One Puzzle</a>
-        <img src="../resources/img/io.jpg" width="30" height="30" class="rounded-circle">
+        <a class="navbar-brand mr-auto text-uppercase" href="#">
+            <img src="../resources/img/OnePuzzle.png" alt="Logo" width="50" height="50">
+            One Puzzle
+        </a>
+        <img id="picture" src="../resources/img/user.jpg" width="50" height="50" class="rounded-circle">
         <ul class="navbar-nav">
-            <li class="nav-item dropdown">
-                <a href="" class="nav-link dropdown-toggle lead" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@gerardosoriano97</a>
-                <div class="dropdown-menu">
-                    <a href="" class="dropdown-item">1</a>
-                    <a href="" class="dropdown-item">2</a>
-                    <a href="" class="dropdown-item">3</a>
-                </div>
+            <li class="nav-item active">
+                <a class="nav-link lead" href="#">@<span id="username"></span></a>
             </li>
         </ul>
     </nav>
 
     <div id="content" class="container-fluid px-0 position-relative">
-        <div id="menu" class="w-100 h-100 position-absolute d-none">
+        <div id="menu" class="w-100 h-100 position-absolute">
             <div class="row d-flex justify-content-center m-5">
                 <div class="col-6 text-center">
                     <span class="display-1 text-white">ONE PUZZLE</span>
                 </div>
             </div>
-            <div class="row justify-content-center m-3">
-                <div class="col-4">
-                    <button id="btnPlay" class="btn btn-block btn-light">Jugar</button>
+            <div id="buttons">
+                <div class="row justify-content-center m-3">
+                    <div class="col-4">
+                        <button id="btnPlay" class="btn btn-block btn-light" onclick="onBtnPlayClick()">Jugar</button>
+                    </div>
+                </div>
+                <div class="row justify-content-center m-3">
+                    <div class="col-4">
+                        <button id="btnTutorial" class="btn btn-block btn-light">¿Cómo jugar?</button>
+                    </div>
+                </div>
+                <div class="row justify-content-center m-3">
+                    <div class="col-4">
+                        <button id="btnSettings" class="btn btn-block btn-light" onclick="onBtnSettingsClick()">Opciones</button>
+                    </div>
+                </div>
+                <div class="row justify-content-center m-3">
+                    <div class="col-4">
+                        <button id="btnStatistics" class="btn btn-block btn-light" onclick="onBtnStatisticsClick()">Estadisticas</button>
+                    </div>
+                </div>
+            </div>
+            <div id="settings" class="row justify-content-center m-3 d-none">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Opciones</h4>
+                            <form action="" id="formSettings">
+                                <div class="form-group row">
+                                    <label for="rngAudio" class="col-2 col-form-label">Audio:</label>
+                                    <div class="col-10">
+                                        <input type="range" name="audio" id="rngAudio" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="rngBrightness" class="col-2 col-form-label">Brillo:</label>
+                                    <div class="col-10">
+                                        <input type="range" name="brightness" id="rngBrightness" class="form-control">
+                                    </div>
+                                </div>
+                            </form>
+                            <button id="btnBack" class="btn btn-primary" onclick="onBtnBackClick()">Regresar al menú</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="statistics" class="row justify-content-center m-3 d-none">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Estadisticas</h4>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="row">
+                                        <p class="lead">#1</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="lead">#2</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="lead">#3</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="lead">#4</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="lead">#5</p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="row">
+                                        <p class="lead">#6</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="lead">#7</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="lead">#8</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="lead">#9</p>
+                                    </div>
+                                    <div class="row">
+                                        <p class="lead">#10</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="btnBack" class="btn btn-primary" onclick="onBtnBackClick()">Regresar al menú</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="pause" class="w-100 h-100 position-absolute d-none">
+            <div class="row d-flex justify-content-center m-5">
+                <div class="col-6 text-center">
+                    <span class="display-1 text-white">PAUSA</span>
                 </div>
             </div>
             <div class="row justify-content-center m-3">
                 <div class="col-4">
-                    <button id="btnTutorial" class="btn btn-block btn-light">¿Cómo jugar?</button>
+                    <button id="btnContinue" class="btn btn-block btn-light" onclick="onBtnContinueClick()">Continuar</button>
                 </div>
             </div>
             <div class="row justify-content-center m-3">
                 <div class="col-4">
-                    <button id="btnSettings" class="btn btn-block btn-light">Opciones</button>
-                </div>
-            </div>
-            <div class="row justify-content-center m-3">
-                <div class="col-4">
-                    <button id="btnStatistics" class="btn btn-block btn-light">Estadisticas</button>
+                    <button id="btnExit" class="btn btn-block btn-light">Salir</button>
                 </div>
             </div>
         </div>
@@ -56,6 +146,21 @@
         <span id="timer" class="text-success display-4 font-weight-bold mx-3">10:00</span>
         <div id="lose" class="w-100 h-100 position-absolute justify-content-center align-items-center bg-danger d-none">
             <span class="display-1 text-white text-uppercase">P E R D I S T E</span>
+        </div>
+        <div id="win" class="w-100 h-100 position-absolute align-items-center bg-success d-none flex-nowrap">
+            <div class="row w-100">
+                <div class="col-12 text-center">
+                    <span class="display-1 text-white text-uppercase mx-auto">G A N A S T E</span>
+                </div>
+                <div class="col-12 text-center">
+                    <span class="display-4 text-white text-lowercase mx-auto">score:
+                        <b id="score"></b>
+                    </span>
+                </div>
+                <div class="col-12 d-flex justify-content-center">
+                    <button id="btnShare" class="btn btn-block btn-primary w-25 my-3" onclick="onBtnShareClick()">compartir</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -70,68 +175,26 @@
     <!-- PLUGINGS -->
     <script src="../resources/plugins/OrbitControls.js"></script>
     <script src="../resources/plugins/PointerLockControls.js"></script>
+    <script src="../resources/plugins/MTLLoader.js"></script>
     <script src="../resources/plugins/OBJLoader.js"></script>
     <script src="../resources/plugins/Water.js"></script>
+    <script src="../resources/plugins/OutlineEffect.js"></script>
     <!-- SHADERS -->
-    <script id="vsCelShading" type="x-shader/x-vertex">
-        varying vec3 vLightDir;
-        varying vec3 vEyeNorm;
-        varying vec4 vColor;
-
-        uniform vec3 uLightPos;
-        uniform vec4 uColor;
-
-        void main(){
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-
-            vec4 tmp = modelViewMatrix * vec4(uLightPos, 1.0);
-            vLightDir = tmp.xyz;
-
-            vEyeNorm = normalMatrix * normal;
-            
-            vColor = uColor;
-        }
+    <script id="vsSkydome" type="application/x-glsl">
+        varying vec2 vUV; void main() { vUV = uv; vec4 pos = vec4(position, 1.0); gl_Position = projectionMatrix * modelViewMatrix
+        * pos; }
     </script>
-    <script id="fsCelShading" type="x-shader/x-fragment">
-        varying vec3 vLightDir;
-        varying vec3 vEyeNorm;
-        varying vec4 vColor;
-
-        void main(){
-            float ndotl = dot(normalize(vEyeNorm), normalize(vLightDir));
-
-            if(ndotl > 0.8){
-                ndotl = 1.0;
-            }else if(ndotl > 0.6){
-                ndotl = 0.6;
-            }else{
-                ndotl = 0.2;
-            }
-
-            gl_FragColor = vec4(ndotl, ndotl, ndotl, 1.0) * vColor;
-        }
+    <script id="fsSkydome" type="application/x-glsl">
+        uniform sampler2D uTexture; varying vec2 vUV; void main() { vec4 sample = texture2D(uTexture, vUV); gl_FragColor = vec4(sample.xyz,
+        sample.w); }
     </script>
-    <script id="vsSkydome" type="application/x-glsl">  
-        varying vec2 vUV;
-        
-        void main() {  
-          vUV = uv;
-          vec4 pos = vec4(position, 1.0);
-          gl_Position = projectionMatrix * modelViewMatrix * pos;
-        }
-    </script>   
-    <script id="fsSkydome" type="application/x-glsl">  
-        uniform sampler2D texture;  
-        varying vec2 vUV;
-        
-        void main() {  
-          vec4 sample = texture2D(texture, vUV);
-          gl_FragColor = vec4(sample.xyz, sample.w);
-        }
-    </script>  
     <!-- CLASSES -->
     <script src="js/class/GraphicsHelper.js"></script>
     <!-- LOGIC -->
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/facebook.js"></script>
     <script src="js/game.js"></script>
 </body>
+
 </html>
